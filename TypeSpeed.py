@@ -2,12 +2,15 @@ import pygame
 import random
 import sys
 import time
-import sqlite3 as sq 
+import sqlite3 as sq
+import matplotlib.pyplot as plt
+
+
 
 
 class Game:
     pygame.init()
- 
+
     def __init__(self):
         self.attempt = 1
         self.l = 750
@@ -75,8 +78,8 @@ class Game:
                         self.run()
                     # stop practice
                     elif 450 <= x <= 650 and 400 <= y <= 450:
-                        self.surface.fill((0,0,0))
-                        self.start_protocal()
+                        self.surface.fill((0, 0, 0))
+                        self.start_protocol()
 
                 elif event.type == pygame.KEYDOWN:
                     if self.start == True and self.end == False:
@@ -158,7 +161,7 @@ class Game:
 
     ############
 
-    def start_protocal(self):
+    def start_protocol(self):
 
         while True:
 
@@ -187,11 +190,18 @@ class Game:
                         # exit button
                     elif 600 <= x <= 700 and 300 <= y <= 350:
                         sys.exit()
+                    elif 50 <= x <= 100 and 300 <= y <= 350:
+                        self.statistics()
 
             pygame.display.update()
+
     def statistics(self):
         # page 1
-        #self.surface.fill((0,0,0))
+        self.surface.fill((0, 0, 0))
+        self.draw_text(self.surface, 'ATTEMPTS', 30, 100, 100, (250, 250, 250))
+        self.draw_text(self.surface, 'WPM', 30,300 , 100, (250, 250, 250))
+        self.draw_text(self.surface, 'ACCURACY', 30, 450, 100, (250, 250, 250))
+        self.draw_text(self.surface, 'TIME TAKEN', 30, 650, 100, (250, 250, 250))
         self.wpm = []
         self.attempt = []
         self.accuracy = []
@@ -206,14 +216,25 @@ class Game:
         temp_row3 = cur.fetchall()
         cur.execute('SELECT time FROM data')
         temp_row4 = cur.fetchall()
-        for i,j,k,l in temp_row1,temp_row2,temp_row3,temp_row4:
-            self.attempt.append(int(i[0]))
-            self.wpm.append(int(j[0]))
-            self.accuracy.append(int(k[0]))
-            self.accuracy.append(int(l[0]))
+
+        def loop(list,x):
+            count = 0
+            for i in list:
+                self.draw_text(self.surface,i[0],30,x,220+count,(250,250,250))
+                count+=20
+        while True:
+            loop(temp_row1,100)
+            loop(temp_row2,300)
+            loop(temp_row3,450)
+            loop(temp_row4,600)
+            for event in pygame.event.get():
+                if event.type == pygame.QUIT:
+                    sys.exit()
 
 
 
 
 
-Game().statistics()#start_protocal()
+
+
+Game().start_protocol()
